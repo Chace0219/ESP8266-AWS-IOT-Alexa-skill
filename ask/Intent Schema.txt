@@ -1,0 +1,53 @@
+﻿{
+  "intents": [
+    {
+      "slots": [
+        {
+          "name": "shadow",
+          "type": "AMAZON.LITERAL"
+        },
+        {
+          "name": "relayid",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "operation",
+          "type": "RELAY_CONTROL"
+        }
+      ],
+      "intent": "RelayControlIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "relayid",
+          "type": "AMAZON.NUMBER"
+        },
+        {
+          "name": "openclose",
+          "type": "OPENCLOSE"
+        }
+      ],
+      "intent": "RelayOpenIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "shadow",
+          "type": "AMAZON.LITERAL"
+        },
+        {
+          "name": "relayid",
+          "type": "AMAZON.NUMBER"
+        }
+      ],
+      "intent": "GetRelayStatus"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    }
+  ]
+}
