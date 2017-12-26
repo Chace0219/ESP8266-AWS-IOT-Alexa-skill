@@ -1,3 +1,0 @@
-﻿RELAY_CONTROL	on | off
-
-RELAY_ID	firstrelay | secondrelay | thirdrelay | fourthrelay

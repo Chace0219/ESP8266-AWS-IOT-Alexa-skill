@@ -1,9 +1,0 @@
-﻿RelayControlIntent turn {operation} motor {relayid} in {first|shadow}
-RelayControlIntent turn {operation} motor {relayid} {first|shadow}
-RelayControlIntent turn {operation} motor {relayid} of {first|shadow}
-RelayOpenIntent {openclose} motor {relayid}
-RelayOpenIntent {openclose} motor {relayid}
-GetRelayStatus I need current status of motor {relayid} of {first|shadow}
-AMAZON.StopIntent bye
-AMAZON.StopIntent stop
-AMAZON.StopIntent good bye
