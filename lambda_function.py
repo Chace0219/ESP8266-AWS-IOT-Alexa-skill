@@ -91,160 +91,6 @@ def handle_session_end_request():
     return build_response({}, build_speechlet_response(
         card_title, speech_output, '', should_end_session))
 
-
-#########################################################
-def relay_openclose_intent(intent, session):
-    client = boto3.client('iot-data')
-    thingsClient = boto3.client('iot')
-
-    card_title = intent['name']
-    should_end_session = False
-
-    try:
-        if 'openclose' in intent['slots']:
-            shadow = 'testdevice'
-            openclose = intent['slots']['openclose']['value']
-            relayid = intent['slots']['relayid']['value']
-
-            operation = ''
-            if openclose == 'open':
-                operation = 'on'
-            elif openclose == 'close':
-                operation = 'off'
-
-            ### check thing name in iot devies  
-            thingsResult = thingsClient.list_things()
-            things = thingsResult['things']
-            mythings = filter(lambda thing: thing['thingName'] == shadow, things)
-            # if there is thing name 
-            if len(mythings) > 0:
-                if relayid == FIRSTRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay01'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    # here
-                    speech_output = 'motor one is turned ' + operation  # done
-                    reprompt_text = speech_output
-                elif relayid == SECONDRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay02'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == THIRDRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay03'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == FOURTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay04'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == FIFTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay05'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == SIXTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay06'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == SEVENTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay07'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == EIGTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay08'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor is turned ' + operation
-                    reprompt_text = speech_output
-                else:
-                    speech_output = 'there is no relay on your device'
-                    reprompt_text = speech_output
-
-            else:  # if there is no thing name you find
-                speech_output = 'there is no device you find'
-                reprompt_text = speech_output
-
-        else:
-            speech_output = 'invalid voice command'
-            reprompt_text = speech_output
-    except:
-        speech_output = 'it happens error.'
-        reprompt_text = speech_output
-
-    return build_response({}, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-
-######################################################################
-
-
 #########################################################
 def relay_control_intenet(intent, session):
     client = boto3.client('iot-data')
@@ -252,137 +98,129 @@ def relay_control_intenet(intent, session):
 
     card_title = intent['name']
     should_end_session = False
+    speech_output = ''
+    reprompt_text = ''
 
     try:
         if 'shadow' in intent['slots']:
-            shadow = intent['slots']['shadow']['value']
-            operation = intent['slots']['operation']['value']
-            relayid = intent['slots']['relayid']['value']
+            # shadow = intent['slots']['shadow']['value']
+            shadow = 'testdevice'
+            # int type motor id
+            motorid = intent['slots']['motorid']['value']
+            new_position = intent['slots']['position']['value']
 
-            ### check thing name in iot devies  
+            ### check thing name in iot devies
             thingsResult = thingsClient.list_things()
             things = thingsResult['things']
             mythings = filter(lambda thing: thing['thingName'] == shadow, things)
-            # if there is thing name 
+
+            # if there is thing name
             if len(mythings) > 0:
-                if relayid == FIRSTRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay01'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    # here
-                    speech_output = 'motor one in ' + shadow + ' is turned ' + operation  # done
-                    reprompt_text = speech_output
-                elif relayid == SECONDRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay02'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == THIRDRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay03'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == FOURTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay04'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == FIFTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay05'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == FIFTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay05'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == SIXTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay06'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == SEVENTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay07'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
-                elif relayid == EIGTHRELAY:
-                    update = dict()
-                    reported = dict()
-                    property = dict()
-                    property['relay08'] = operation
-                    reported['desired'] = property
-                    update['state'] = reported
-                    response = client.update_thing_shadow(
-                        thingName=shadow,
-                        payload=json.dumps(update)
-                    )
-                    speech_output = relayid + ' motor in ' + shadow + ' is turned ' + operation
-                    reprompt_text = speech_output
+                response = client.get_thing_shadow(
+                    thingName=shadow
+                )
+                state = json.loads(response['payload'].read())
+                if motorid == 1:
+                    position = state['state']['reported']['motor1']['position']
+                    action = state['state']['reported']['motor1']['action']
+                    if action != 'idle':
+                        speech_output = 'motor ' + str(motorid) + ' is in active state'
+                        reprompt_text = speech_output
+                    elif position == new_position:
+                        speech_output = 'motor ' + str(motorid) + ' is already in desired position'
+                        reprompt_text = speech_output
+                    else:
+                        update = dict()
+                        desired = dict()
+                        motor = dict()
+                        action = dict()
+                        action['position'] = new_position
+                        motor['motor2'] = action
+                        desired['desired'] = motor
+                        update['state'] = desired
+                        response = client.update_thing_shadow(
+                            thingName=shadow,
+                            payload=json.dumps(update)
+                        )
+                        # here
+                        speech_output = 'motor ' + str(motorid) + ' will be act to ' + str(new_position)
+                        reprompt_text = speech_output
+
+                elif motorid == 2:
+                    position = state['state']['reported']['motor2']['position']
+                    action = state['state']['reported']['motor2']['action']
+                    if action != 'idle':
+                        speech_output = 'motor ' + str(motorid) + ' is in active state'
+                        reprompt_text = speech_output
+                    elif position == new_position:
+                        speech_output = 'motor ' + str(motorid) + ' is already in desired position'
+                        reprompt_text = speech_output
+                    else:
+                        update = dict()
+                        desired = dict()
+                        motor = dict()
+                        action = dict()
+                        action['position'] = new_position
+                        motor['motor1'] = action
+                        desired['desired'] = motor
+                        update['state'] = desired
+                        response = client.update_thing_shadow(
+                            thingName=shadow,
+                            payload=json.dumps(update)
+                        )
+                        # here
+                        speech_output = 'motor ' + str(motorid) + ' will be act to ' + str(new_position)
+                        reprompt_text = speech_output
+                elif motorid == 3:
+                    position = state['state']['reported']['motor3']['position']
+                    action = state['state']['reported']['motor3']['action']
+                    if action != 'idle':
+                        speech_output = 'motor ' + str(motorid) + ' is in active state'
+                        reprompt_text = speech_output
+                    elif position == new_position:
+                        speech_output = 'motor ' + str(motorid) + ' is already in desired position'
+                        reprompt_text = speech_output
+                    else:
+                        update = dict()
+                        desired = dict()
+                        motor = dict()
+                        action = dict()
+                        action['position'] = new_position
+                        motor['motor3'] = action
+                        desired['desired'] = motor
+                        update['state'] = desired
+                        response = client.update_thing_shadow(
+                            thingName=shadow,
+                            payload=json.dumps(update)
+                        )
+                        # here
+                        speech_output = 'motor ' + str(motorid) + ' will be act to ' + str(new_position)
+                        reprompt_text = speech_output
+                elif motorid == 4:
+                    position = state['state']['reported']['motor4']['position']
+                    action = state['state']['reported']['motor4']['action']
+                    if action != 'idle':
+                        speech_output = 'motor ' + str(motorid) + ' is in active state'
+                        reprompt_text = speech_output
+                    elif position == new_position:
+                        speech_output = 'motor ' + str(motorid) + ' is already in desired position'
+                        reprompt_text = speech_output
+                    else:
+                        update = dict()
+                        desired = dict()
+                        motor = dict()
+                        action = dict()
+                        action['position'] = new_position
+                        motor['motor4'] = action
+                        desired['desired'] = motor
+                        update['state'] = desired
+                        response = client.update_thing_shadow(
+                            thingName=shadow,
+                            payload=json.dumps(update)
+                        )
+                        # here
+                        speech_output = 'motor ' + str(motorid) + ' will be act to ' + str(new_position)
+                        reprompt_text = speech_output
                 else:
                     speech_output = 'there is no relay on your device'
                     reprompt_text = speech_output
@@ -412,10 +250,16 @@ def get_status_intenet(intent, session):
     card_title = intent['name']
     should_end_session = False
 
+    speech_output = ''
+    reprompt_text = ''
+
     try:
         if 'shadow' in intent['slots']:
-            shadow = intent['slots']['shadow']['value']
-            relayid = intent['slots']['relayid']['value']
+
+            # shadow = intent['slots']['shadow']['value']
+            shadow = 'testdevice'
+            # int type motor id
+            motorid = intent['slots']['motorid']['value']
 
             ###
             thingsResult = thingsClient.list_things()
@@ -427,43 +271,23 @@ def get_status_intenet(intent, session):
                     thingName=shadow
                 )
                 state = json.loads(response['payload'].read())
+                position = 0
+                action = ''
+                if motorid == 1:
+                    position = state['state']['reported']['motor1']['position']
+                    action = state['state']['reported']['motor1']['action']
+                elif motorid == 2:
+                    position = state['state']['reported']['motor2']['position']
+                    action = state['state']['reported']['motor2']['action']
+                elif motorid == 3:
+                    position = state['state']['reported']['motor3']['position']
+                    action = state['state']['reported']['motor3']['action']
+                elif motorid == 4:
+                    position = state['state']['reported']['motor4']['position']
+                    action = state['state']['reported']['motor4']['action']
 
-                if relayid != FIRSTRELAY:
-                    relaystatus = state['state']['reported']['relay01']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != SECONDRELAY:
-                    relaystatus = state['state']['reported']['relay02']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != THIRDRELAY:
-                    relaystatus = state['state']['reported']['relay03']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != FOURTHRELAY:
-                    relaystatus = state['state']['reported']['relay04']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != FIFTHRELAY:
-                    relaystatus = state['state']['reported']['relay05']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != SIXTHRELAY:
-                    relaystatus = state['state']['reported']['relay06']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != SEVENTHRELAY:
-                    relaystatus = state['state']['reported']['relay07']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                elif relayid != EIGTHRELAY:
-                    relaystatus = state['state']['reported']['relay08']
-                    speech_output = 'current status of ' + relayid + ' motor in ' + shadow + ' is ' + relaystatus
-                    reprompt_text = speech_output
-                else:
-                    speech_output = 'there is no relayid on device'
-                    reprompt_text = speech_output
-
+                speech_output = 'motor ' + str(motorid)+ ' is in ' + action + ', ' + str(position)
+                reprompt_text = speech_output
             else:
                 speech_output = 'there is no device you find'
                 reprompt_text = speech_output
